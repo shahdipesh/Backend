@@ -3,6 +3,7 @@ import express from 'express';
 import { setNextGuesser } from './gameService.js';
 import { getIO } from './socketManager.js';
 import { events } from './events.js';
+import { generateRandomIndex } from './gameService.ts'
 
 const router = express.Router();
 
@@ -41,6 +42,7 @@ router.post('/restart', async (req, res) => {
   game.numRound = 0;
   game.currentWordIndex = game.currentWordIndex + 1;
   game.gameStarted = false;
+  game.imposterIndex = generateRandomIndex(game.numPlayers)
 
   players.forEach((player) => {
     io.to(player.socketId).emit('PLAY_AGAIN');
