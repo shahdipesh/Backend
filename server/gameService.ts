@@ -4,7 +4,7 @@ export const setNextGuesser = (gameId) => {
   const game = games[gameId];
   let players = game['players'];
   game.currentGuesser = (game.currentGuesser + 1) % game.players.length;
-  if (game.currentGuesser == 0) {
+  if (game.currentGuesser === 0) {
     game.numRound += 1;
   }
   if (game.numRound == 1) {

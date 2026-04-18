@@ -98,6 +98,20 @@ io.on('connection', async(socket) => {
     if (player) {
       console.log("Player exist, updating socket id")
       player.socketId = socket.id;
+      if(game.gameStarted){
+        io.to(player.socketId).emit(events.START_GAME);
+        if(game.players[game.imposterIndex].userId===player.userId){
+          io.to(player.socketId).emit(events.IMPOSTER);
+        }else{
+          io.to(player.socketId).emit(events.WORD, {
+            wordToGuess: game['words'][game.currentWordIndex],
+          });
+        }
+        if(game.players[game.currentGuesser].userId===player.userId){
+          io.to(player.socketId).emit(events.YOUR_TURN);
+        }
+      }
+
     }
 
     let players = game['players'];

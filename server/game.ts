@@ -23,8 +23,6 @@ router.post('/guess', async (req, res) => {
     } else {
       const indexOfGuesser = game.currentGuesser ?? 0;
       const playerToSend = players[indexOfGuesser];
-      console.log('SENDING GUESS EVENT TO', indexOfGuesser);
-      console.log('SENDING GUESS TO Socket ID:', playerToSend.socketId);
       io.to(playerToSend.socketId).emit(events.YOUR_TURN);
       res.send({ msg: `${playerToSend} turn to guess` });
     }
