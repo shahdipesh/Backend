@@ -28,6 +28,9 @@ app.get('/isOwner', (req, res) => {
   const { userId, gameId } = req.query;
   const game = games[gameId];
 
+  if(!game){
+    io.send(events.DISCONNECT)
+  }
   if (game['hostId'] == userId) {
     res.json({ isOwner: true });
   } else {
@@ -43,6 +46,8 @@ app.post('/createRoom', (req, res) => {
   if (games[gameId]) {
     res.json({ msg: 'Name already taken' });
   } else {
+    const currentGuesser = generateRandomIndex(numPlayers);
+    const imposterIndex = generateRandomIndex(numPlayers);
     games[gameId] = {
       gameId: gameId,
       hostId: userId,
@@ -53,8 +58,9 @@ app.post('/createRoom', (req, res) => {
       words: gameWords,
       currentWordIndex: 0,
       gameStarted: false,
-      currentGuesser: generateRandomIndex(numPlayers),
-      imposterIndex: generateRandomIndex(numPlayers)
+      currentGuesser,
+      imposterIndex,
+      startingPlayerIndex: currentGuesser
     };
     res.json({ gameId: gameId });
   }

@@ -11,5 +11,6 @@ export type Game = {
   currentWordIndex: number;
   gameStarted: boolean;
   currentGuesser: number;
-  imposterIndex: number
+  imposterIndex: number,
+  startingPlayerIndex: number
 };
