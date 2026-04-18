@@ -2,14 +2,28 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Debug Express Server",
+      "name": "Debug Server (tsx)",
       "type": "node",
       "request": "launch",
-      "program": "${workspaceFolder}/server/server.js",
-      "cwd": "${workspaceFolder}/server",
-      "runtimeExecutable": "nodemon",
-      "restart": true,
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/tsx",
+      "args": ["${workspaceFolder}/server/server.ts"],
+      "cwd": "${workspaceFolder}",
       "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
+      "env": {
+        "NODE_ENV": "development"
+      }
+    },
+    {
+      "name": "Debug Server (tsx watch)",
+      "type": "node",
+      "request": "launch",
+      "runtimeExecutable": "${workspaceFolder}/node_modules/.bin/tsx",
+      "runtimeArgs": ["watch"],
+      "args": ["${workspaceFolder}/server/server.ts"],
+      "cwd": "${workspaceFolder}",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"],
       "env": {
         "NODE_ENV": "development"
       }
