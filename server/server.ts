@@ -107,7 +107,7 @@ io.on('connection', async(socket) => {
       if(game.gameStarted){
         io.to(player.socketId).emit(events.START_GAME);
         if(game.players[game.imposterIndex].userId===player.userId){
-          io.to(player.socketId).emit(events.IMPOSTER);
+          io.to(player.socketId).emit(events.IMPOSTER,({hint:game['words'][game.currentWordIndex].hint}));
         }else{
           io.to(player.socketId).emit(events.WORD, {
             wordToGuess: game['words'][game.currentWordIndex],
@@ -148,7 +148,7 @@ io.on('connection', async(socket) => {
         game.players[game.imposterIndex].isImposter = true;
         let imposterPlayerSocketId = players[game.imposterIndex].socketId;
         if (imposterPlayerSocketId) {
-          io.to(imposterPlayerSocketId).emit(events.IMPOSTER);
+          io.to(imposterPlayerSocketId).emit(events.IMPOSTER,({hint:game['words'][game.currentWordIndex].hint}));
           console.log(game.imposterIndex + ' is the new imposter');
         } else {
           console.error("Imposter Player id not found")

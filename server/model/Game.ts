@@ -1,4 +1,5 @@
 import type { Player } from './Player.js';
+import { Word } from './Word.js';
 
 export type Game = {
   gameId: string;
@@ -7,7 +8,7 @@ export type Game = {
   numRound: number;
   players: Player[];
   socketIds: string[];
-  words: string[];
+  words: Array<Word>;
   currentWordIndex: number;
   gameStarted: boolean;
   currentGuesser: number;
