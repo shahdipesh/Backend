@@ -39,11 +39,14 @@ router.post('/restart', async (req, res) => {
   const game = games[gameId];
   let players = game['players'];
 
+  let currentGuesserIndex = generateRandomIndex(game.numPlayers)
+
   game.numRound = 0;
   game.currentWordIndex = game.currentWordIndex + 1;
   game.gameStarted = false;
   game.imposterIndex = generateRandomIndex(game.numPlayers)
-  game.currentGuesser = generateRandomIndex(game.numPlayers)
+  game.currentGuesser = currentGuesserIndex
+  game.startingPlayerIndex = currentGuesserIndex
 
   players.forEach((player) => {
     io.to(player.socketId).emit('PLAY_AGAIN');
