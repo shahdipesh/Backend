@@ -23,8 +23,18 @@ router.post('/guess', async (req, res) => {
       res.send({ msg: 'Round Over' });
     } else {
       const indexOfGuesser = game.currentGuesser ?? 0;
+      players.forEach((p, i) => {
+        if (i != indexOfGuesser) {
+          if (players[i] && players[i].socketId) {
+            console.log("knjfkjfrn")
+            let playerTurnName = players[indexOfGuesser]['playerName'];
+            io.to(players[i].socketId).emit(events.PLAYER_TURN, ({ playerTurnName: playerTurnName}));
+          }
+        }
+      })
       const playerToSend = players[indexOfGuesser];
       io.to(playerToSend.socketId).emit(events.YOUR_TURN);
+      
       res.send({ msg: `${playerToSend} turn to guess` });
     }
   } catch {

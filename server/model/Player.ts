@@ -1,6 +1,6 @@
 export type Player = {
   userId: string;
-  playerName?: string;
+  playerName: string;
   score: number;
   socketId?: string;
   isImposter?: boolean;

@@ -28,7 +28,7 @@ app.get('/isOwner', (req, res) => {
   const { userId, gameId } = req.query;
   const game = games[gameId];
 
-  if(!game){
+  if (!game) {
     io.send(events.DISCONNECT)
   }
   if (game['hostId'] == userId) {
@@ -42,6 +42,7 @@ app.post('/createRoom', (req, res) => {
   const userId = req.body.userId;
   const gameId = req.body.gameId;
   const numPlayers = req.body.numPlayers;
+  const playerName = req.body.playerName
   const gameWords = getGameWords();
   if (games[gameId]) {
     res.json({ msg: 'Name already taken' });
@@ -62,7 +63,7 @@ app.post('/createRoom', (req, res) => {
       imposterIndex,
       startingPlayerIndex: currentGuesser
     };
-    res.json({ gameId: gameId });
+    res.json({ gameId: gameId, playerName:playerName });
   }
 });
 
@@ -82,17 +83,17 @@ app.post('/joinRoom', async (req, res) => {
 
   const player = game['players'].find((p) => p.userId === userId);
   if (!player) {
-      game.players.push({
+    game.players.push({
       userId: userId,
       playerName: playerName,
       score: 0,
       isImposter: false,
     })
   }
-  res.json({gameId,userId});
+  res.json({ gameId, userId });
 });
 
-io.on('connection', async(socket) => {
+io.on('connection', async (socket) => {
   socket.on(events.JOIN_GAME, ({ gameId, userId }) => {
     console.log('JOIN EVENT');
     const game = games[gameId];
@@ -104,20 +105,19 @@ io.on('connection', async(socket) => {
     if (player) {
       console.log("Player exist, updating socket id")
       player.socketId = socket.id;
-      if(game.gameStarted){
+      if (game.gameStarted) {
         io.to(player.socketId).emit(events.START_GAME);
-        if(game.players[game.imposterIndex].userId===player.userId){
-          io.to(player.socketId).emit(events.IMPOSTER,({hint:game['words'][game.currentWordIndex].hint}));
-        }else{
+        if (game.players[game.imposterIndex].userId === player.userId) {
+          io.to(player.socketId).emit(events.IMPOSTER, ({ hint: game['words'][game.currentWordIndex].hint }));
+        } else {
           io.to(player.socketId).emit(events.WORD, {
             wordToGuess: game['words'][game.currentWordIndex],
           });
         }
-        if(game.players[game.currentGuesser].userId===player.userId){
+        if (game.players[game.currentGuesser].userId === player.userId) {
           io.to(player.socketId).emit(events.YOUR_TURN);
         }
       }
-
     }
 
     let players = game['players'];
@@ -143,12 +143,20 @@ io.on('connection', async(socket) => {
         }
       });
       let indexOfGuesser = game.currentGuesser;
+      players.forEach((p, i) => {
+        if (i != indexOfGuesser) {
+          if (players[i] && players[i].socketId) {
+            let playerTurnName = players[indexOfGuesser]['playerName'];
+            io.to(players[i].socketId).emit(events.PLAYER_TURN, ({ playerTurnName: playerTurnName }));
+          }
+        }
+      })
       if (players[indexOfGuesser]?.socketId) {
         io.to(players[indexOfGuesser].socketId).emit(events.YOUR_TURN);
         game.players[game.imposterIndex].isImposter = true;
         let imposterPlayerSocketId = players[game.imposterIndex].socketId;
         if (imposterPlayerSocketId) {
-          io.to(imposterPlayerSocketId).emit(events.IMPOSTER,({hint:game['words'][game.currentWordIndex].hint}));
+          io.to(imposterPlayerSocketId).emit(events.IMPOSTER, ({ hint: game['words'][game.currentWordIndex].hint }));
           console.log(game.imposterIndex + ' is the new imposter');
         } else {
           console.error("Imposter Player id not found")

@@ -8,5 +8,5 @@ export const events = {
   WORD: 'WORD',
   YOUR_TURN: 'YOUR_TURN',
   ROUND_OVER: 'ROUND_OVER',
-  DISCONNECT: 'DISCONNECT'
+  DISCONNECT: 'DISCONNECT',
 };
