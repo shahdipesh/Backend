@@ -42,6 +42,15 @@ router.post('/guess', async (req, res) => {
   }
 });
 
+router.post('/whoseTurn', (req,res)=>{
+  const userId = req.body.userId;
+  const gameId = req.body.gameId;
+  const game = games[gameId];
+  let players = game['players'];
+  let currentGuesser = game.currentGuesser
+  res.json({userId,name:players[currentGuesser].playerName})
+})
+
 router.post('/restart', async (req, res) => {
   const io = getIO();
   const userId = req.body.userId;
