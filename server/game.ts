@@ -48,7 +48,7 @@ router.post('/whoseTurn', (req,res)=>{
   const game = games[gameId];
   let players = game['players'];
   let currentGuesser = game.currentGuesser
-  res.json({userId,name:players[currentGuesser].playerName})
+  res.json({userId: players[currentGuesser].userId,name:players[currentGuesser].playerName})
 })
 
 router.post('/restart', async (req, res) => {
