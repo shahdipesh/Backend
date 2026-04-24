@@ -1,4 +1,5 @@
 import type { Player } from './Player.js';
+import { Score } from './Score.js';
 import { Word } from './Word.js';
 
 export type Game = {
@@ -13,5 +14,11 @@ export type Game = {
   gameStarted: boolean;
   currentGuesser: number;
   imposterIndex: number,
-  startingPlayerIndex: number
+  startingPlayerIndex: number,
+  numberOfGuesses:number,
+  leaderBoard: Score[],
+  isVotingStarted: Boolean,
+  isVotingEnded: Boolean,
+  numVotes: 0,
+  currentVoterIds:String[],
 };

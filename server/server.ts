@@ -7,6 +7,7 @@ import { events } from './events.js';
 import gameRouter from './game.js';
 import { setIO } from './socketManager.js';
 import { generateRandomIndex, getGameWords } from './gameService.ts'
+import { Score } from './model/Score.ts'
 
 const app = express();
 const server = http.createServer(app);
@@ -61,7 +62,13 @@ app.post('/createRoom', (req, res) => {
       gameStarted: false,
       currentGuesser,
       imposterIndex,
-      startingPlayerIndex: currentGuesser
+      startingPlayerIndex: currentGuesser,
+      numberOfGuesses:0,
+      leaderBoard:[],
+      isVotingStarted: false,
+      isVotingEnded: true,
+      numVotes: 0,
+      currentVoterIds:[]
     };
     res.json({ gameId: gameId, playerName:playerName });
   }
@@ -81,8 +88,9 @@ app.post('/joinRoom', async (req, res) => {
     }
   }
 
+  //if room not full
   const player = game['players'].find((p) => p.userId === userId);
-  if (!player) {
+  if (!player) { //if its a new player
     game.players.push({
       userId: userId,
       playerName: playerName,

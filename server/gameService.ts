@@ -7,7 +7,9 @@ export const setNextGuesser = (gameId) => {
   if (game.currentGuesser === game.startingPlayerIndex) {
     game.numRound += 1;
   }
-  if (game.numRound == 2) {
+  if (game.numRound == 1) {
+    game.isVotingStarted = true
+    game.isVotingEnded = false
     return true;
   }
 };
