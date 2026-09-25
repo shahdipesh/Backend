@@ -126,9 +126,9 @@ router.post('/guessImposter',(req, res)=>{
 
   console.log("guessedWord", guessedWord)
   console.log("asdad",game.words[game.currentWordIndex].word)
-  if(guessedImposterId===guessedPlayer.userId || guessedWord===game.words[game.currentWordIndex].word.toLowerCase()){
+  if(guessedImposterId===guessedPlayer.userId || guessedWord?.trim().toLowerCase()===game.words[game.currentWordIndex].word.trim().toLowerCase()){
     let isWordGuessed = false
-    if(guessedWord===game.words[game.currentWordIndex].word.toLowerCase()){
+    if(guessedWord?.trim().toLowerCase()===game.words[game.currentWordIndex].word.trim().toLowerCase()){
       isWordGuessed = true
     }
     players.forEach(p=>{
@@ -172,7 +172,13 @@ router.post('/guessImposter',(req, res)=>{
 router.get('/getScore',(req,res)=>{
   const { gameId } = req.query;
   const game = games[gameId];
-  return game.leaderBoard
+  const leaderBoard = game.players.map((p) => ({
+    playerName: p.playerName,
+    playerId: p.userId,
+    score: p.score,
+    gameId,
+  }));
+  res.json(leaderBoard)
 })
 
 router.get(`/hasAlreadyVoted`,(req,res)=>{
