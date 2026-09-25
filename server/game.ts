@@ -90,6 +90,11 @@ router.post('/guessImposter',(req, res)=>{
   const userId = req.body.userId;
   const gameId = req.body.gameId;
   const guessedImposterId = req.body.guessedImposterId;
+  const guessedWord = req.body.guessedWord;
+  let isImposter = false
+  if(guessedImposterId===games[gameId].players[games[gameId].imposterIndex].userId){
+    isImposter = true
+  }
 
   const game = games[gameId];
   game.numVotes+=1;
@@ -119,19 +124,44 @@ router.post('/guessImposter',(req, res)=>{
     })
   }
 
-  if(guessedImposterId===guessedPlayer.userId){
+  console.log("guessedWord", guessedWord)
+  console.log("asdad",game.words[game.currentWordIndex].word)
+  if(guessedImposterId===guessedPlayer.userId || guessedWord===game.words[game.currentWordIndex].word.toLowerCase()){
+    let isWordGuessed = false
+    if(guessedWord===game.words[game.currentWordIndex].word.toLowerCase()){
+      isWordGuessed = true
+    }
     players.forEach(p=>{
       if(p.userId===userId){
-        p.score+=1
+        if(isWordGuessed){
+          p.score+=2
+        } else{
+          p.score+=1
+        }
       }
     })
     game.leaderBoard.forEach(s=>{
       if(s.playerId===userId){
+        if(isWordGuessed){
+          s.score+=2
+        } else{
         s.score+=1
+        }
       }
     })
     res.json({msg:userId})
     return
+  } else {
+    players.forEach(p=>{
+      if(p.userId===userId){
+        (p.score>0 && !isImposter)?p.score-=1:p.score=0
+      }
+    })
+    game.leaderBoard.forEach(s=>{
+      if(s.playerId===userId){
+        (s.score>0 && !isImposter)?s.score-=1:s.score=0
+      }
+    })
   }
   game.isVotingStarted = true
   game.isVotingEnded = false
